@@ -37,11 +37,12 @@ class MujocoEnv(gym.Env):
     """Interface for MuJoCo environments.
     """
 
-    def __init__(self, frame_skip):
+    def __init__(self, frame_skip, randomize : bool = False):
 
         self.frame_skip = frame_skip
         self.build_model()
         self.data = self.sim.data
+        self.randomize = randomize
 
         self.metadata = {
             'render.modes': ['human', 'rgb_array', 'depth_array'],
@@ -104,6 +105,8 @@ class MujocoEnv(gym.Env):
     def reset(self):
         self.sim.reset()
         ob = self.reset_model()
+        if self.done and self.randomize:
+            self.set_random_parameters()
         return ob
 
     def set_state(self, qpos, qvel):

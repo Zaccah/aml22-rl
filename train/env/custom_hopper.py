@@ -11,9 +11,13 @@ from .mujoco_env import MujocoEnv
 from scipy.stats import truncnorm
 
 class CustomHopper(MujocoEnv, utils.EzPickle):
-    def __init__(self, domain=None):
-        MujocoEnv.__init__(self, 4)
+    def __init__(self, domain=None, randomize = False):
+        MujocoEnv.__init__(self, 4, randomize)
         utils.EzPickle.__init__(self)
+
+        self.bounds = None
+        self.done = False
+        self.domain = domain
 
         self.original_masses = np.copy(self.sim.model.body_mass[1:])    # Default link masses
 
@@ -27,18 +31,25 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
         """
         self.set_parameters(*self.sample_parameters())
 
+    def set_bounds(self, bounds: list):
+        self.bounds = bounds
+
     def sample_parameters(self):
         """Sample masses according to a domain randomization distribution
         TODO
         """
-        return
+        if self.bounds is not None:
+            rand_masses = [np.random.uniform(l, h) for (l, h) in self.bounds]
+            rand_masses.insert(0, self.sim.model.body_mass[1])
+            return rand_masses
+        return self.sim.model.body_mass[1:]
 
     def get_parameters(self):
         """Get value of mass for each link"""
         masses = np.array( self.sim.model.body_mass[1:] )
         return masses
 
-    def set_parameters(self, task):
+    def set_parameters(self, *task):
         """Set each hopper link's mass to a new value"""
         self.sim.model.body_mass[1:] = task
 
@@ -58,10 +69,10 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
         reward += alive_bonus
         reward -= 1e-3 * np.square(a).sum()
         s = self.state_vector()
-        done = not (np.isfinite(s).all() and (np.abs(s[2:]) < 100).all() and (height > .7) and (abs(ang) < .2))
+        self.done = not (np.isfinite(s).all() and (np.abs(s[2:]) < 100).all() and (height > .7) and (abs(ang) < .2))
         ob = self._get_obs()
 
-        return ob, reward, done, {}
+        return ob, reward, self.done, {}
 
     def _get_obs(self):
         """Get current state"""
@@ -108,3 +119,9 @@ gym.envs.register(
         kwargs={"domain": "target"}
 )
 
+gym.envs.register(
+        id="CustomHopper-source-rand-v0",
+        entry_point="%s:CustomHopper" % __name__,
+        max_episode_steps=500,
+        kwargs={"domain": "source", "randomize": True}
+)
