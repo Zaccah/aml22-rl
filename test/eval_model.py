@@ -13,7 +13,7 @@ def main():
             "lr_schedule": .0003,
             "clip_range": .2
         }
-        model = PPO.load(r'trained_models/ppo_standard_source.zip', env=env, custom_objects=custom_objects)
+        model = PPO.load(r'trained_models/PPO_standard.zip', env=env, custom_objects=custom_objects)
     
     except IOError:
         print("File not found, check the relative path and run in a terminal within the folder")
