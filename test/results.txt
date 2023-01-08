@@ -1,5 +1,0 @@
-TEST 1
-algorithm: PPO
-hypermarameters: standard
-source-source avg: 1145.5152545499802
-source-source std: 5.161518912153865
