@@ -1,0 +1,7 @@
+explaination of the functions:
+https://agents.inf.ed.ac.uk/blog/reinforcement-learning-implementation-tricks/
+
+SEE THE FUNCTION ENV_CHECK OF STABLEBASELINES3 that check if the enviroment is okay
+
+generally of gym and in particular of wrappers:
+https://blog.paperspace.com/getting-started-with-openai-gym/  
