@@ -4,18 +4,19 @@ from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.vec_env import VecFrameStack
+from stable_baselines3.common.monitor import Monitor
 
 def main():
-    render = True
+    render = False
     test_env = 'CustomHopper-source-v0'
     env = gym.make(test_env)
-    
+    env = Monitor(env=env)
     try:
         custom_objects = {
             "lr_schedule": .0003,
             "clip_range": .2
         }
-        model = PPO.load(r'./trained_models/PPO_standard_source.zip', env=env, custom_objects=custom_objects)
+        model = PPO.load(r'./trained_models/PPO_rand_source.zip', env=env, custom_objects=custom_objects)
     
     except IOError:
         print("File not found, check the relative path and run in a terminal within the folder (you must be in /test folder)")
