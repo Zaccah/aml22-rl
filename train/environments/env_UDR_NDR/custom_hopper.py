@@ -50,17 +50,16 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
             rand_masses = [np.random.uniform(l, h) for (l, h) in self.bounds]
             rand_masses.insert(0, self.sim.model.body_mass[1])
             return rand_masses
-        else:
-            rand_masses = []
-            for i in range(len(self.stand_dev)):
-                rand_masses.append(np.random.normal(self.mean_rand[i], self.stand_dev[i]))
-                if rand_masses[i] > self.mean_max[i]:
-                    rand_masses[i] = self.mean_max[i]
-                if rand_masses[i] < self.mean_min[i]:
-                    rand_masses[i] = self.mean_min[i]
-            rand_masses.insert(0, self.sim.model.body_mass[1])
-            return rand_masses
-        return self.sim.model.body_mass[1:]
+        
+        rand_masses = []
+        for i in range(len(self.stand_dev)):
+            rand_masses.append(np.random.normal(self.mean_rand[i], self.stand_dev[i]))
+            if rand_masses[i] > self.mean_max[i]:
+                rand_masses[i] = self.mean_max[i]
+            if rand_masses[i] < self.mean_min[i]:
+                rand_masses[i] = self.mean_min[i]
+        rand_masses.insert(0, self.sim.model.body_mass[1])
+        return rand_masses
 
     def get_parameters(self):
         """Get value of mass for each link"""

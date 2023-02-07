@@ -12,16 +12,16 @@ import gym
 from env.custom_hopper import *
 
 def main():
-    render = True
+    render = False
 
     # env = gym.make('CustomHopper-source-v0')  # [2.53429174 3.92699082 2.71433605 5.0893801 ]
     # env = gym.make('CustomHopper-target-v0')  # [3.53429174 3.92699082 2.71433605 5.0893801 ] 
-    env = gym.make('CustomHopper-source-v0')
+    env = gym.make('CustomHopper-target-v0')
     # env = gym.wrappers.RecordVideo(env=env, video_folder=r'./videos/')
     print('State space:', env.observation_space)  # state-space
     print('Action space:', env.action_space)  # action-space
     print('Dynamics parameters:', env.get_parameters())  # masses of each link of the Hopper
-
+    return
     n_episodes = 1000
     
     for ep in range(n_episodes):  
