@@ -15,6 +15,7 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
         MujocoEnv.__init__(self, 4, randomize)
         utils.EzPickle.__init__(self)
 
+
         self.bounds = None
         self.done = False
         self.domain = domain
@@ -23,6 +24,10 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
 
         if domain == 'source':  # Source environment has an imprecise torso mass (1kg shift)
             self.sim.model.body_mass[1] -= 1.0
+
+        self.mean_rand = self.model.body_mass[2:]
+        self.mean_max = [val * 1.75 for val in self.mean_rand]
+        self.mean_min = [val * 0.25 for val in self.mean_rand]
 
 
     def set_random_parameters(self):
@@ -34,12 +39,25 @@ class CustomHopper(MujocoEnv, utils.EzPickle):
     def set_bounds(self, bounds: list):
         self.bounds = bounds
 
+    def set_std(self, stand_dev):
+        self.stand_dev = [value * stand_dev for value in self.mean_rand]
+
     def sample_parameters(self):
         """Sample masses according to a domain randomization distribution
         TODO
         """
         if self.bounds is not None:
             rand_masses = [np.random.uniform(l, h) for (l, h) in self.bounds]
+            rand_masses.insert(0, self.sim.model.body_mass[1])
+            return rand_masses
+        else:
+            rand_masses = []
+            for i in range(len(self.stand_dev)):
+                rand_masses.append(np.random.normal(self.mean_rand[i], self.stand_dev[i]))
+                if rand_masses[i] > self.mean_max[i]:
+                    rand_masses[i] = self.mean_max[i]
+                if rand_masses[i] < self.mean_min[i]:
+                    rand_masses[i] = self.mean_min[i]
             rand_masses.insert(0, self.sim.model.body_mass[1])
             return rand_masses
         return self.sim.model.body_mass[1:]
@@ -125,3 +143,11 @@ gym.envs.register(
         max_episode_steps=500,
         kwargs={"domain": "source", "randomize": True}
 )
+
+gym.envs.register(
+        id="CustomHopper-target-rand-v0",
+        entry_point="%s:CustomHopper" % __name__,
+        max_episode_steps=500,
+        kwargs={"domain": "target", "randomize": True}
+)
+
