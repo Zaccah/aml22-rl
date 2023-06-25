@@ -1,5 +1,5 @@
 # Code for course project of Advanced Machine Learning (AML) AA 2022/2023
-"Sim-to-Real transfer of Reinforcement Learning policies in robotics" exam project.
+"Sim-to-Real transfer of Reinforcement Learning policies in robotics" exam project. `project_RL_paper.pdf` is a paper with complete context and explanation for our design choices and tests.
 
 *Starting code has been forked from [this repo](https://github.com/gabrieletiboni/aml22-rl), check it out for basic information.*
 
